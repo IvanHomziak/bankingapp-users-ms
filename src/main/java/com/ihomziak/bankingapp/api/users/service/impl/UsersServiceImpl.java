@@ -34,6 +34,6 @@ public class UsersServiceImpl implements UsersService {
 
         usersRepository.save(user);
 
-        return null;
+        return modelMapper.map(user, UserDto.class);
     }
 }
