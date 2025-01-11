@@ -1,51 +1,62 @@
 package com.ihomziak.bankingapp.api.users.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.ihomziak.bankingapp.api.users.service.UsersService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
 
-//    @Value("gateway.ip")
-//    private String GATEWAY_IP;
-    private Environment environment;
+	private final Environment environment;
+	private final UsersService usersService;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public WebSecurity(Environment environment) {
-        this.environment = environment;
-    }
-
+	public WebSecurity(Environment environment, UsersService usersService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.environment = environment;
+		this.usersService = usersService;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection for stateless APIs
-                .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.disable()) // Allow embedded frames (e.g., for H2 console)
-                )
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll() // Permit POST requests to /users/**
-//                        .requestMatchers(HttpMethod.POST, "/users/**").access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")) // Permit POST requests to /users/** from specific IP address
-                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll() // Permit POST requests to /users/**
-                        .requestMatchers("/h2-console/**").permitAll() // Allow access to H2 console
-                        .anyRequest().authenticated() // Authenticate all other requests
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless sessions
-                );
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
-        return http.build(); // Build and return the security filter chain
+    	// Configure AuthenticationManagerBuilder
+    	AuthenticationManagerBuilder authenticationManagerBuilder =
+    			http.getSharedObject(AuthenticationManagerBuilder.class);
+
+    	authenticationManagerBuilder.userDetailsService(usersService)
+    	.passwordEncoder(bCryptPasswordEncoder);
+
+    	AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+
+    	// Create AuthenticationFilter
+    	AuthenticationFilter authenticationFilter =
+    			new AuthenticationFilter(usersService, environment, authenticationManager);
+    	authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
+
+    	http.csrf((csrf) -> csrf.disable());
+
+    	http.authorizeHttpRequests((authz) -> authz
+    	.requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
+        .addFilter(authenticationFilter)
+        .authenticationManager(authenticationManager)
+        .sessionManagement((session) -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+    	http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
+        return http.build();
+
     }
 }
