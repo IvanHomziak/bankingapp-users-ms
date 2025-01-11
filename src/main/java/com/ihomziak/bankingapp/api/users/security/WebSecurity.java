@@ -18,44 +18,45 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class WebSecurity {
 
-	private final Environment environment;
-	private final UsersService usersService;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Environment environment;
+    private final UsersService usersService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public WebSecurity(Environment environment, UsersService usersService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-		this.environment = environment;
-		this.usersService = usersService;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	}
+    public WebSecurity(Environment environment, UsersService usersService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.environment = environment;
+        this.usersService = usersService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
-    	// Configure AuthenticationManagerBuilder
-    	AuthenticationManagerBuilder authenticationManagerBuilder =
-    			http.getSharedObject(AuthenticationManagerBuilder.class);
+        // Configure AuthenticationManagerBuilder
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
 
-    	authenticationManagerBuilder.userDetailsService(usersService)
-    	.passwordEncoder(bCryptPasswordEncoder);
+        authenticationManagerBuilder.userDetailsService(usersService)
+                .passwordEncoder(bCryptPasswordEncoder);
 
-    	AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
-    	// Create AuthenticationFilter
-    	AuthenticationFilter authenticationFilter =
-    			new AuthenticationFilter(usersService, environment, authenticationManager);
-    	authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
+        // Create AuthenticationFilter
+        AuthenticationFilter authenticationFilter =
+                new AuthenticationFilter(usersService, environment, authenticationManager);
+        authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
 
-    	http.csrf((csrf) -> csrf.disable());
+        http.csrf((csrf) -> csrf.disable());
 
-    	http.authorizeHttpRequests((authz) -> authz
-    	.requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
-        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
-        .addFilter(authenticationFilter)
-        .authenticationManager(authenticationManager)
-        .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(new AntPathRequestMatcher("/users", "GET")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
+                .addFilter(authenticationFilter)
+                .authenticationManager(authenticationManager)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-    	http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
+        http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
         return http.build();
 
     }
