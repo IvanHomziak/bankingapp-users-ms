@@ -59,24 +59,58 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
-			Authentication auth) throws IOException, ServletException {
+											Authentication auth) throws IOException, ServletException {
 
+		// Get the username of the authenticated user
 		String userName = ((User) auth.getPrincipal()).getUsername();
+
+		// Fetch user details using the username
 		UserDto userDetails = usersService.getUserDetailsByEmail(userName);
+
+		// Get token secret and expiration time from environment properties
 		String tokenSecret = environment.getProperty("token.secret");
+		String expirationTimeStr = environment.getProperty("token.expiration_time");
+
+		if (tokenSecret == null || expirationTimeStr == null) {
+			throw new IllegalStateException("Token secret or expiration time not configured properly");
+		}
+
+		try {
+			// Generate JWT token
+			String token = generateJwtToken(userDetails.getUserId(), tokenSecret, Long.parseLong(expirationTimeStr));
+
+			// Add token and userId to the response headers
+			res.addHeader("token", token);
+			res.addHeader("userId", userDetails.getUserId());
+
+			logger.info("Successful authentication for user: {} " + userName);
+		} catch (Exception e) {
+			logger.error("Error during successful authentication: {}", e);
+			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			res.getWriter().write("An error occurred during authentication");
+		}
+	}
+
+	/**
+	 * Generates a JWT token.
+	 *
+	 * @param userId        The ID of the user.
+	 * @param tokenSecret   The secret key for signing the token.
+	 * @param expirationMs  The expiration time in milliseconds.
+	 * @return The generated JWT token.
+	 */
+	private String generateJwtToken(String userId, String tokenSecret, long expirationMs) {
 		byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+		SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
 		Instant now = Instant.now();
- 		
-		String token = Jwts.builder()
-                .subject(userDetails.getUserId())
-                .expiration(Date.from(now.plusMillis(Long.parseLong(environment.getProperty("token.expiration_time")))))
-                .issuedAt(Date.from(now))
-                .signWith(secretKey)   
-                .compact();
 
-		res.addHeader("token", token);
-		res.addHeader("userId", userDetails.getUserId());
+		return Jwts.builder()
+				.subject(userId)
+				.issuedAt(Date.from(now))
+				.expiration(Date.from(now.plusMillis(expirationMs)))
+				.signWith(secretKey)
+				.compact();
 	}
+
 }
