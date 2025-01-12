@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ihomziak.bankingapp.api.users</groupId>
-    <artifactId>BankingAppApiUsers</artifactId>
+    <artifactId>banking-app-users-ws</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BankingAppApiUsers</name>
     <description>BankingAppApiUsers</description>
@@ -26,12 +26,14 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
         <jwt.version>0.12.6</jwt.version>
     </properties>
+
     <dependencies>
 
         <dependency>
@@ -126,6 +128,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
 
 <!--        <dependency>-->
