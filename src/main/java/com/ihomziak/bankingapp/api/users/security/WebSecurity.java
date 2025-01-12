@@ -48,8 +48,8 @@ public class WebSecurity {
         http.csrf((csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/users", "GET")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users/**", "GET")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users/**", "POST")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
                 .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
