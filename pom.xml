@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ihomziak.bankingapp.api.users</groupId>
-    <artifactId>banking-app-users-ws</artifactId>
+    <artifactId>bankingapp-users-ws</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BankingAppApiUsers</name>
     <description>BankingAppApiUsers</description>
