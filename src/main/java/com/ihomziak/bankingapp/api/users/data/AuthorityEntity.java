@@ -2,7 +2,6 @@ package com.ihomziak.bankingapp.api.users.data;
 
 import jakarta.persistence.*;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -10,32 +9,31 @@ import java.util.Collection;
 @Table(name = "authorities")
 public class AuthorityEntity implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 2313213122242342524L;
+    private static final long serialVersionUID = 1618156374241833700L;
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue
+    private long id;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(nullable = false, length = 20)
     private String name;
 
     @ManyToMany(mappedBy = "authorities")
     private Collection<RoleEntity> roles;
 
     public AuthorityEntity() {
+
     }
 
     public AuthorityEntity(String name) {
         this.name = name;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -54,4 +52,6 @@ public class AuthorityEntity implements Serializable {
     public void setRoles(Collection<RoleEntity> roles) {
         this.roles = roles;
     }
+
+
 }
