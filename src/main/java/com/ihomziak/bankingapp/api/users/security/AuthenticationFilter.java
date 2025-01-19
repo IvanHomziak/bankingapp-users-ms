@@ -30,8 +30,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private UsersService usersService;
-    private Environment environment;
+    private final UsersService usersService;
+    private final Environment environment;
 
     public AuthenticationFilter(UsersService usersService, Environment environment,
                                 AuthenticationManager authenticationManager) {
