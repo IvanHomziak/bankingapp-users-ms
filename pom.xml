@@ -126,6 +126,13 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.ihomziak.transactioncommon</groupId>
+            <artifactId>client-transaction-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

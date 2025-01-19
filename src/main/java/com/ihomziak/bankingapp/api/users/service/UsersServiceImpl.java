@@ -2,7 +2,6 @@ package com.ihomziak.bankingapp.api.users.service;
 
 import com.ihomziak.bankingapp.api.users.data.*;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
-import com.ihomziak.bankingapp.api.users.ui.model.AlbumResponseModel;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
@@ -29,19 +28,16 @@ public class UsersServiceImpl implements UsersService {
 	BCryptPasswordEncoder bCryptPasswordEncoder;
 	//RestTemplate restTemplate;
 	Environment environment;
-	AlbumsServiceClient albumsServiceClient;
-	
+
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	public UsersServiceImpl(UsersRepository usersRepository,
 							BCryptPasswordEncoder bCryptPasswordEncoder,
-							AlbumsServiceClient albumsServiceClient,
 							Environment environment)
 	{
 		this.usersRepository = usersRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.albumsServiceClient = albumsServiceClient;
 		this.environment = environment;
 	}
  
@@ -115,11 +111,8 @@ public class UsersServiceImpl implements UsersService {
         */
         
         logger.info("Before calling albums Microservice");
-        List<AlbumResponseModel> albumsList = albumsServiceClient.getAlbums(userId, authorization);
         logger.info("After calling albums Microservice");
-        
-		userDto.setAlbums(albumsList);
-		
+
 		return userDto;
 	}
 }
