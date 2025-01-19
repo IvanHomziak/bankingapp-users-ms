@@ -7,7 +7,6 @@ import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
@@ -23,7 +22,6 @@ import org.springframework.security.core.userdetails.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,85 +30,74 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-	private UsersService usersService;
-	private Environment environment;
+    private UsersService usersService;
+    private Environment environment;
 
-	public AuthenticationFilter(UsersService usersService, Environment environment,
-			AuthenticationManager authenticationManager) {
-		super(authenticationManager);
-		this.usersService = usersService;
-		this.environment = environment;
-	}
+    public AuthenticationFilter(UsersService usersService, Environment environment,
+                                AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+        this.usersService = usersService;
+        this.environment = environment;
+    }
 
-	@Override
-	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
-			throws AuthenticationException {
-		try {
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
+            throws AuthenticationException {
+        try {
 
-			LoginRequestModel creds = new ObjectMapper().readValue(req.getInputStream(), LoginRequestModel.class);
+            LoginRequestModel creds = new ObjectMapper().readValue(req.getInputStream(), LoginRequestModel.class);
 
-			return getAuthenticationManager().authenticate(
-					new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()));
+            return getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()));
 
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
-											Authentication auth) throws IOException, ServletException {
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
 
-		// Get the username of the authenticated user
-		String userName = ((User) auth.getPrincipal()).getUsername();
+        // Get the username of the authenticated user
+        String userName = ((User) auth.getPrincipal()).getUsername();
 
-		// Fetch user details using the username
-		UserDto userDetails = usersService.getUserDetailsByEmail(userName);
+        // Fetch user details using the username
+        UserDto userDetails = usersService.getUserDetailsByEmail(userName);
 
-		// Get token secret and expiration time from environment properties
-		String tokenSecret = environment.getProperty("token.secret");
-		String expirationTimeStr = environment.getProperty("token.expiration_time");
+        // Get token secret and expiration time from environment properties
+        String tokenSecret = environment.getProperty("token.secret");
+        String expirationTimeStr = environment.getProperty("token.expiration_time");
 
-		if (tokenSecret == null || expirationTimeStr == null) {
-			throw new IllegalStateException("Token secret or expiration time not configured properly");
-		}
+        if (tokenSecret == null || expirationTimeStr == null) {
+            throw new IllegalStateException("Token secret or expiration time not configured properly");
+        }
 
-		try {
-			// Generate JWT token
-			String token = generateJwtToken(userDetails.getUserId(), tokenSecret, Long.parseLong(expirationTimeStr));
+        try {
 
-			// Add token and userId to the response headers
-			res.addHeader("token", token);
-			res.addHeader("userId", userDetails.getUserId());
+            byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
+            SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
 
-			logger.info("Successful authentication for user: {} " + userName);
-		} catch (Exception e) {
-			logger.error("Error during successful authentication: {}", e);
-			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			res.getWriter().write("An error occurred during authentication");
-		}
-	}
+            Instant now = Instant.now();
 
-	/**
-	 * Generates a JWT token.
-	 *
-	 * @param userId        The ID of the user.
-	 * @param tokenSecret   The secret key for signing the token.
-	 * @param expirationMs  The expiration time in milliseconds.
-	 * @return The generated JWT token.
-	 */
-	private String generateJwtToken(String userId, String tokenSecret, long expirationMs) {
-		byte[] secretKeyBytes = Base64.getEncoder().encode(tokenSecret.getBytes());
-		SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+            // Generate JWT token
+            String token = Jwts.builder()
+                    .claim("scope", auth.getAuthorities())
+                    .subject(userDetails.getUserId())
+                    .issuedAt(Date.from(now))
+                    .expiration(Date.from(now.plusMillis(Long.parseLong(expirationTimeStr))))
+                    .signWith(secretKey)
+                    .compact();
 
-		Instant now = Instant.now();
+            // Add token and userId to the response headers
+            res.addHeader("token", token);
+            res.addHeader("userId", userDetails.getUserId());
 
-		return Jwts.builder()
-				.subject(userId)
-				.issuedAt(Date.from(now))
-				.expiration(Date.from(now.plusMillis(expirationMs)))
-				.signWith(secretKey)
-				.compact();
-	}
-
+            logger.info("Successful authentication for user: {} " + userName);
+        } catch (Exception e) {
+            logger.error("Error during successful authentication: {}", e);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.getWriter().write("An error occurred during authentication");
+        }
+    }
 }
