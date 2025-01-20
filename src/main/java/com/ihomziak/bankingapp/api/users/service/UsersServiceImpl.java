@@ -2,12 +2,16 @@ package com.ihomziak.bankingapp.api.users.service;
 
 import com.ihomziak.bankingapp.api.users.data.*;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
+import com.ihomziak.bankingapp.api.users.ui.model.AlbumResponseModel;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,30 +19,30 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UsersServiceImpl implements UsersService {
-	
-	UsersRepository usersRepository;
-	BCryptPasswordEncoder bCryptPasswordEncoder;
-	//RestTemplate restTemplate;
-	Environment environment;
+
+	private final UsersRepository usersRepository;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final RestTemplate restTemplate;
+	private final Environment environment;
+
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	public UsersServiceImpl(UsersRepository usersRepository,
-							BCryptPasswordEncoder bCryptPasswordEncoder,
-							Environment environment)
+                            BCryptPasswordEncoder bCryptPasswordEncoder, RestTemplate restTemplate,
+                            Environment environment)
 	{
 		this.usersRepository = usersRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.environment = environment;
+        this.restTemplate = restTemplate;
+        this.environment = environment;
 	}
  
 	@Override
@@ -102,15 +106,16 @@ public class UsersServiceImpl implements UsersService {
         
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
         
-        /*
-        String albumsUrl = String.format(environment.getProperty("albums.url"), userId);
-        
+
+        String albumsUrl = String.format(Objects.requireNonNull(environment.getProperty("albums.url")), userId);
+
         ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(albumsUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<AlbumResponseModel>>() {
         });
-        List<AlbumResponseModel> albumsList = albumsListResponse.getBody(); 
-        */
-        
-        logger.info("Before calling albums Microservice");
+
+        List<AlbumResponseModel> albumsList = albumsListResponse.getBody();
+
+		logger.info("Before calling albums Microservice");
+		userDto.setAlbums(albumsList);
         logger.info("After calling albums Microservice");
 
 		return userDto;

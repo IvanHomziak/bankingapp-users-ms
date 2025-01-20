@@ -60,6 +60,20 @@ public class InitialUsersSetup {
         if (admin == null) {
             usersRepository.save(user);
         }
+
+        UserEntity user2 = new UserEntity();
+        user2.setFirstName("Jack");
+        user2.setLastName("Sparrow");
+        user2.setUserId(UUID.randomUUID().toString());
+        user2.setEmail("jack.sparrow2@gmail.com");
+        user2.setEncryptedPassword(bCryptPasswordEncoder.encode("password"));
+        user2.setRoles(Arrays.asList(adminRole));
+
+        UserEntity admin2 = usersRepository.findByEmail(user2.getEmail());
+
+        if (admin2 == null) {
+            usersRepository.save(user2);
+        }
     }
 
     @Transactional

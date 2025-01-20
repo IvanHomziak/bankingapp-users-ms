@@ -53,8 +53,10 @@ public class WebSecurity {
                         .requestMatchers(new AntPathRequestMatcher("/actuator/**", "GET")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/**", "GET")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users/**", "POST")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users/**", "DELETE")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
                 .addFilter(authenticationFilter)
+                .addFilter(new AuthorizationFilter(authenticationManager, environment))
                 .authenticationManager(authenticationManager)
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
