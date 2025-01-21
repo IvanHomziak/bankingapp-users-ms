@@ -3,6 +3,7 @@ package com.ihomziak.bankingapp.api.users.service;
 import com.ihomziak.bankingapp.api.users.data.*;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
 import com.ihomziak.bankingapp.api.users.ui.model.AlbumResponseModel;
+import feign.FeignException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
@@ -26,98 +27,91 @@ import java.util.*;
 @Service
 public class UsersServiceImpl implements UsersService {
 
-	private final UsersRepository usersRepository;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final RestTemplate restTemplate;
-	private final Environment environment;
+    private static final Logger logger = LoggerFactory.getLogger(UsersServiceImpl.class);
+
+    private final UsersRepository usersRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Environment environment;
+    private final AlbumsServiceClient albumsServiceClient;
 
 
-	Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	public UsersServiceImpl(UsersRepository usersRepository,
+    @Autowired
+    public UsersServiceImpl(UsersRepository usersRepository,
                             BCryptPasswordEncoder bCryptPasswordEncoder, RestTemplate restTemplate,
-                            Environment environment)
-	{
-		this.usersRepository = usersRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.restTemplate = restTemplate;
+                            Environment environment, AlbumsServiceClient albumsServiceClient) {
+        this.usersRepository = usersRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.environment = environment;
-	}
- 
-	@Override
-	public UserDto createUser(UserDto userDetails) {
-		// TODO Auto-generated method stub
-		
-		userDetails.setUserId(UUID.randomUUID().toString());
-		userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
-		
-		ModelMapper modelMapper = new ModelMapper(); 
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
-		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+        this.albumsServiceClient = albumsServiceClient;
+    }
 
-		usersRepository.save(userEntity);
-		
-		UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
- 
-		return returnValue;
-	}
+    @Override
+    public UserDto createUser(UserDto userDetails) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserEntity userEntity = usersRepository.findByEmail(username);
-		
-		if(userEntity == null) throw new UsernameNotFoundException(username);	
-		
-		Collection<GrantedAuthority> authorities = new ArrayList<>();
-		Collection<RoleEntity> roles = userEntity.getRoles();
-		
-		roles.forEach((role) -> {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-			
-			Collection<AuthorityEntity> authorityEntities = role.getAuthorities();
-			authorityEntities.forEach((authorityEntity) -> {
-				authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
-			});
-		});
-		
-		return new User(userEntity.getEmail(), 
-				userEntity.getEncryptedPassword(), 
-				true, true, true, true, 
-				authorities);
-	}
+        userDetails.setUserId(UUID.randomUUID().toString());
+        userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
 
-	@Override
-	public UserDto getUserDetailsByEmail(String email) { 
-		UserEntity userEntity = usersRepository.findByEmail(email);
-		
-		if(userEntity == null) throw new UsernameNotFoundException(email);
-		
-		
-		return new ModelMapper().map(userEntity, UserDto.class);
-	}
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-	@Override
-	public UserDto getUserByUserId(String userId, String authorization) {
-		
-        UserEntity userEntity = usersRepository.findByUserId(userId);
-        if(userEntity == null) throw new UsernameNotFoundException("User not found");
-        
-        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
-        
+        UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
 
-        String albumsUrl = String.format(Objects.requireNonNull(environment.getProperty("albums.url")), userId);
+        usersRepository.save(userEntity);
 
-        ResponseEntity<List<AlbumResponseModel>> albumsListResponse = restTemplate.exchange(albumsUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<AlbumResponseModel>>() {
+        UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
+
+        return returnValue;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = usersRepository.findByEmail(username);
+
+        if (userEntity == null) throw new UsernameNotFoundException(username);
+
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        Collection<RoleEntity> roles = userEntity.getRoles();
+
+        roles.forEach((role) -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+
+            Collection<AuthorityEntity> authorityEntities = role.getAuthorities();
+            authorityEntities.forEach((authorityEntity) -> {
+                authorities.add(new SimpleGrantedAuthority(authorityEntity.getName()));
+            });
         });
 
-        List<AlbumResponseModel> albumsList = albumsListResponse.getBody();
+        return new User(userEntity.getEmail(),
+                userEntity.getEncryptedPassword(),
+                true, true, true, true,
+                authorities);
+    }
 
-		logger.info("Before calling albums Microservice");
-		userDto.setAlbums(albumsList);
+    @Override
+    public UserDto getUserDetailsByEmail(String email) {
+        UserEntity userEntity = usersRepository.findByEmail(email);
+
+        if (userEntity == null) throw new UsernameNotFoundException(email);
+
+
+        return new ModelMapper().map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public UserDto getUserByUserId(String userId, String authorization) {
+
+        UserEntity userEntity = usersRepository.findByUserId(userId);
+        if (userEntity == null) throw new UsernameNotFoundException("User not found");
+
+        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
+
+        List<AlbumResponseModel> albumsList = albumsServiceClient.getAlbums(userId);
+
+        logger.info("Before calling albums Microservice");
+        userDto.setAlbums(albumsList);
         logger.info("After calling albums Microservice");
 
-		return userDto;
-	}
+        return userDto;
+    }
 }

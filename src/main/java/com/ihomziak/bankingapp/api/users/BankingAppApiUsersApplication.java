@@ -1,5 +1,7 @@
 package com.ihomziak.bankingapp.api.users;
 
+import com.ihomziak.bankingapp.api.users.shared.FeignErrorDecoder;
+import feign.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
@@ -32,8 +34,17 @@ public class BankingAppApiUsersApplication {
 
     @Bean
     @LoadBalanced
-    public RestTemplate getRestTemplate()
-    {
+    public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
+
+    @Bean
+    public Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;
+    }
+
+//    @Bean
+//    public FeignErrorDecoder getFeignErrorDecoder() {
+//        return new FeignErrorDecoder();
+//    }
 }

@@ -1,6 +1,7 @@
 package com.ihomziak.bankingapp.api.users.security;
 
 import com.ihomziak.bankingapp.api.users.service.UsersService;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableMethodSecurity(prePostEnabled=true)
 @Configuration
@@ -49,12 +49,14 @@ public class WebSecurity {
 
         http.csrf((csrf) -> csrf.disable());
 
-        http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/**", "GET")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users/**", "GET")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users/**", "POST")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users/**", "DELETE")).hasRole("ADMIN")
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
+        http.authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                )
                 .addFilter(authenticationFilter)
                 .addFilter(new AuthorizationFilter(authenticationManager, environment))
                 .authenticationManager(authenticationManager)
