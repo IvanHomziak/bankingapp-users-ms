@@ -1,0 +1,44 @@
+version: '3.1'
+
+services:
+  mysqldb:
+    container_name: mysqldb-users-c
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: clientuser
+      MYSQL_PASSWORD: clientpassword
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: admin1234
+    ports:
+      - "3309:3306"
+    networks:
+      - users-ms-net
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d/ # path to script which should create database
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-padmin1234" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  users-ms-app:
+    container_name: users-ms
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8086:8086"
+    networks:
+      - users-ms-net
+      - bankingapp-network  # 🔹 Connect to global network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+
+networks:
+  users-ms-net:
+  bankingapp-network:
+    driver: bridge  # Connect to global network

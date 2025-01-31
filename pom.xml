@@ -8,24 +8,13 @@
         <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.ihomziak.bankingapp.api.users</groupId>
-    <artifactId>bankingapp-users-ws</artifactId>
+    <artifactId>bankingapp-users-ms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>BankingAppApiUsers</name>
     <description>BankingAppApiUsers</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -127,9 +116,10 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Custom Common Dependency -->
         <dependency>
-            <groupId>com.ihomziak.transactioncommon</groupId>
-            <artifactId>client-transaction-common</artifactId>
+            <groupId>com.ihomziak.bankingapp.common</groupId>
+            <artifactId>bankingapp-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -170,6 +160,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>bankingapp-users-ms</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -195,22 +186,22 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-scm-plugin</artifactId>-->
-<!--                <version>1.11.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>checkout</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <connectionUrl>scm:git:https://github.com/IvanHomziak/jwt-authorities.git</connectionUrl>-->
-<!--                    <checkoutDirectory>./jwt-authorities</checkoutDirectory>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.11.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <connectionUrl>scm:git:https://github.com/IvanHomziak/bankingapp-common.git</connectionUrl>
+                    <checkoutDirectory>./bankingapp-common</checkoutDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

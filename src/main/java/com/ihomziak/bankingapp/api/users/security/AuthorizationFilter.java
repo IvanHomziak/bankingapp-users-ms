@@ -2,7 +2,7 @@ package com.ihomziak.bankingapp.api.users.security;
 
 import java.io.IOException;
 
-import com.ihomziak.transactioncommon.api.JwtClaimsParser;
+import com.ihomziak.bankingapp.common.api.JwtClaimsParser;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
