@@ -1,6 +1,6 @@
-package com.ihomziak.bankingapp.api.users.ui.model;
+package com.ihomziak.bankingapp.api.users.dto;
 
-public class CreateUserResponseModel {
+public class CreateUserResponseDto {
 	private String firstName;
 	private String lastName;
 	private String email;

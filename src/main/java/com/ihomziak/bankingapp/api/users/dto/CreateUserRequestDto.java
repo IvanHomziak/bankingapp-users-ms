@@ -1,10 +1,10 @@
-package com.ihomziak.bankingapp.api.users.ui.model;
+package com.ihomziak.bankingapp.api.users.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class CreateUserRequestModel {
+public class CreateUserRequestDto {
 	
 	@NotNull(message="First name cannot be null")
 	@Size(min=2, message= "First name must not be less than two characters")

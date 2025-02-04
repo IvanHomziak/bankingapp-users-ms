@@ -1,6 +1,11 @@
 package com.ihomziak.bankingapp.api.users;
 
-import com.ihomziak.bankingapp.api.users.data.*;
+import com.ihomziak.bankingapp.api.users.dao.AuthoritiesRepository;
+import com.ihomziak.bankingapp.api.users.dao.RoleRepository;
+import com.ihomziak.bankingapp.api.users.dao.UsersRepository;
+import com.ihomziak.bankingapp.api.users.entity.AuthorityEntity;
+import com.ihomziak.bankingapp.api.users.entity.RoleEntity;
+import com.ihomziak.bankingapp.api.users.entity.UserEntity;
 import com.ihomziak.bankingapp.api.users.shared.Roles;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -26,7 +31,7 @@ public class InitialUsersSetup {
     private final UsersRepository usersRepository;
 
     @Autowired
-    public InitialUsersSetup(AuthoritiesRepository authoritiesRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, com.ihomziak.bankingapp.api.users.data.UsersRepository usersRepository) {
+    public InitialUsersSetup(AuthoritiesRepository authoritiesRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, UsersRepository usersRepository) {
         this.authoritiesRepository = authoritiesRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;

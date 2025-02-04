@@ -10,7 +10,7 @@ import javax.crypto.SecretKey;
 
 import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
-import com.ihomziak.bankingapp.api.users.ui.model.LoginRequestModel;
+import com.ihomziak.bankingapp.api.users.dto.LoginRequestDto;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,7 +48,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
 
-            LoginRequestModel creds = new ObjectMapper().readValue(req.getInputStream(), LoginRequestModel.class);
+            LoginRequestDto creds = new ObjectMapper().readValue(req.getInputStream(), LoginRequestDto.class);
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(), new ArrayList<>()));

@@ -1,6 +1,6 @@
-package com.ihomziak.bankingapp.api.users.ui.model;
+package com.ihomziak.bankingapp.api.users.dto;
 
-public class AlbumResponseModel {
+public class AlbumResponseDto {
 
     private String albumId;
     private String userId; 

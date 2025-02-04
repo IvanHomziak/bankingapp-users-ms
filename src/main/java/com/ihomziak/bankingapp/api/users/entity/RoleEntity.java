@@ -1,4 +1,4 @@
-package com.ihomziak.bankingapp.api.users.data;
+package com.ihomziak.bankingapp.api.users.entity;
 
 import jakarta.persistence.*;
 

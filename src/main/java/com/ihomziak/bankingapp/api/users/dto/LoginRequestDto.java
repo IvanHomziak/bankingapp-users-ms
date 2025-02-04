@@ -1,6 +1,6 @@
-package com.ihomziak.bankingapp.api.users.ui.model;
+package com.ihomziak.bankingapp.api.users.dto;
 
-public class LoginRequestModel {
+public class LoginRequestDto {
 	private String email;
 	private String password;
 

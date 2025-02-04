@@ -1,6 +1,6 @@
 package com.ihomziak.bankingapp.api.users.shared;
 
-import com.ihomziak.bankingapp.api.users.ui.model.AlbumResponseModel;
+import com.ihomziak.bankingapp.api.users.dto.AlbumResponseDto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,13 +17,13 @@ public class UserDto implements Serializable {
 	private String password;
 	private String userId;
 	private String encryptedPassword;
-	private List<AlbumResponseModel> albums;
+	private List<AlbumResponseDto> albums;
 
-	public List<AlbumResponseModel> getAlbums() {
+	public List<AlbumResponseDto> getAlbums() {
 		return albums;
 	}
 
-	public void setAlbums(List<AlbumResponseModel> albums) {
+	public void setAlbums(List<AlbumResponseDto> albums) {
 		this.albums = albums;
 	}
 

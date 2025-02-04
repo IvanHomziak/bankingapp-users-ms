@@ -1,7 +1,7 @@
-package com.ihomziak.bankingapp.api.users.data;
+package com.ihomziak.bankingapp.api.users.dao;
 
+import com.ihomziak.bankingapp.api.users.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 public interface UsersRepository extends JpaRepository<UserEntity, Long> {
 

@@ -1,18 +1,19 @@
-package com.ihomziak.bankingapp.api.users.service;
+package com.ihomziak.bankingapp.api.users.service.impl;
 
-import com.ihomziak.bankingapp.api.users.data.*;
+import com.ihomziak.bankingapp.api.users.dao.AlbumsServiceClient;
+import com.ihomziak.bankingapp.api.users.dao.UsersRepository;
+import com.ihomziak.bankingapp.api.users.entity.AuthorityEntity;
+import com.ihomziak.bankingapp.api.users.entity.RoleEntity;
+import com.ihomziak.bankingapp.api.users.entity.UserEntity;
+import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
-import com.ihomziak.bankingapp.api.users.ui.model.AlbumResponseModel;
-import feign.FeignException;
+import com.ihomziak.bankingapp.api.users.dto.AlbumResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -106,7 +107,7 @@ public class UsersServiceImpl implements UsersService {
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-        List<AlbumResponseModel> albumsList = albumsServiceClient.getAlbums(userId);
+        List<AlbumResponseDto> albumsList = albumsServiceClient.getAlbums(userId);
 
         logger.info("Before calling albums Microservice");
         userDto.setAlbums(albumsList);

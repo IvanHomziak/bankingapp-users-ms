@@ -1,10 +1,10 @@
-package com.ihomziak.bankingapp.api.users.ui.controllers;
+package com.ihomziak.bankingapp.api.users.controller;
 
 import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
-import com.ihomziak.bankingapp.api.users.ui.model.CreateUserRequestModel;
-import com.ihomziak.bankingapp.api.users.ui.model.CreateUserResponseModel;
-import com.ihomziak.bankingapp.api.users.ui.model.UserResponseModel;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserRequestDto;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
+import com.ihomziak.bankingapp.api.users.dto.UserResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class UsersController {
 			consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
-	public ResponseEntity<CreateUserResponseModel> createUser(@RequestBody CreateUserRequestModel userDetails)
+	public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails)
 	{
 		ModelMapper modelMapper = new ModelMapper(); 
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -44,7 +44,7 @@ public class UsersController {
 		
 		UserDto createdUser = usersService.createUser(userDto);
 		
-		CreateUserResponseModel returnValue = modelMapper.map(createdUser, CreateUserResponseModel.class);
+		CreateUserResponseDto returnValue = modelMapper.map(createdUser, CreateUserResponseDto.class);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
@@ -53,11 +53,11 @@ public class UsersController {
     @PreAuthorize("hasRole('ADMIN') or principal == #userId")
     //@PreAuthorize("principal == #userId")
     //@PostAuthorize("principal == returnObject.body.userId")
-    public ResponseEntity<UserResponseModel> getUser(@PathVariable("userId") String userId,
-													 @RequestHeader("Authorization") String authorization) {
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable("userId") String userId,
+												   @RequestHeader("Authorization") String authorization) {
        
         UserDto userDto = usersService.getUserByUserId(userId, authorization); 
-        UserResponseModel returnValue = new ModelMapper().map(userDto, UserResponseModel.class);
+        UserResponseDto returnValue = new ModelMapper().map(userDto, UserResponseDto.class);
         
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }

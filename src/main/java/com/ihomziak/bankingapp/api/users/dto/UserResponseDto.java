@@ -1,20 +1,20 @@
-package com.ihomziak.bankingapp.api.users.ui.model;
+package com.ihomziak.bankingapp.api.users.dto;
 
 import java.util.List;
 
-public class UserResponseModel {
+public class UserResponseDto {
 
     private String userId;
     private String firstName;
     private String lastName;
     private String email;
-	private List<AlbumResponseModel> albums;
+	private List<AlbumResponseDto> albums;
 
-	public List<AlbumResponseModel> getAlbums() {
+	public List<AlbumResponseDto> getAlbums() {
 		return albums;
 	}
 
-	public void setAlbums(List<AlbumResponseModel> albums) {
+	public void setAlbums(List<AlbumResponseDto> albums) {
 		this.albums = albums;
 	}
 
