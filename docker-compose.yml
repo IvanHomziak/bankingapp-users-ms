@@ -14,7 +14,7 @@ services:
     ports:
       - "3309:3306"
     networks:
-      - users-ms-net
+      - bankingapp-network  # 🔹 Connect to global network
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d/ # path to script which should create database
     healthcheck:
@@ -23,7 +23,34 @@ services:
       timeout: 10s
       retries: 3
 
+  #  users-ms-app:
+  #    container_name: users-ms
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+  #    restart: always
+  #    ports:
+  #      - "8086:8086"
+  #    networks:
+  #      - users-ms-net
+  #      - bankingapp-network  # 🔹 Connect to global network
+  #    depends_on:
+  #      mysqldb:
+  #        condition: service_healthy
+
+  eureka-discovery-service:
+    image: ihomziak/bankingapp-discovery-service:latest
+    container_name: discovery-service
+    ports:
+      - "8010:8010"
+    networks:
+      - bankingapp-network  # 🔹 Connect to global network
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+
   users-ms-app:
+    image: ihomziak/bankingapp-users-ms:latest
     container_name: users-ms
     build:
       context: .
@@ -32,7 +59,6 @@ services:
     ports:
       - "8086:8086"
     networks:
-      - users-ms-net
       - bankingapp-network  # 🔹 Connect to global network
     depends_on:
       mysqldb:
@@ -40,31 +66,58 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./data/prometheus/config:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - bankingapp-network  # 🔹 Connect to global network
     ports:
       - "9090:9090"
-    volumes:
-      - ./prometheus/tmp:/prometheus
-      - ./prometheus/config:/etc/prometheus
-    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
+  #      links:
+  #        - node-exporter:node-exporter
+
+  #  node-exporter:
+  #    image: prom/node-exporter:latest
+  #    network_mode: host
+  #    container_name: monitoring_node_exporter
+  #    restart: unless-stopped
+  #    expose:
+  #      - 9100
 
   grafana:
     image: grafana/grafana:10.0.3
+    container_name: grafana
+    restart: unless-stopped
+    user: root
+    networks:
+      - bankingapp-network  # 🔹 Connect to global network
     ports:
-      - "3000:3000"
+      - 3000:3000 # access grafana url
     volumes:
-      - ./grafana/tmp:/var/lib/grafana
-      - ./grafana/grafana.ini:/monitoring/grafana/grafana.ini
+      - ./data/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      #      - GF_SERVER_DOMAIN=localhost
+      # Enabled for logging
+      - GF_LOG_MODE=console file
+      - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
 
-  alertmanager:
-    image: prom/alertmanager:v0.25.0
-    ports:
-      - "9093:9093"
-    volumes:
-      - ./alert-manager/tmp:/data
-      - ./alert-manager/config:/config
-    command: --config.file=/config/alertmanager.yml --log.level=debug
+#  alertmanager:
+#    image: prom/alertmanager:v0.25.0
+#    ports:
+#      - "9093:9093"
+#    volumes:
+#      - ./alert-manager/tmp:/data
+#      - ./alert-manager/config:/config
+#    command: --config.file=/config/alertmanager.yml --log.level=debug
+
 
 networks:
   users-ms-net:
   bankingapp-network:
     driver: bridge  # Connect to global network
+  monitoring:
