@@ -52,10 +52,6 @@ services:
   users-ms-app:
     image: ihomziak/bankingapp-users-ms:latest
     container_name: users-ms
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
     ports:
       - "8086:8086"
     networks:
