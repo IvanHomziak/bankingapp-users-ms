@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>com.ihomziak.bankingapp.api.users</groupId>
@@ -21,6 +21,12 @@
         <maven.compiler.target>17</maven.compiler.target>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
         <jwt.version>0.12.6</jwt.version>
+        <modelmapper.version>3.2.2</modelmapper.version>
+        <jackson.dataformat.xml.version>2.18.2</jackson.dataformat.xml.version>
+        <resilience4j.all.version>2.3.0</resilience4j.all.version>
+        <resilience4j.spring.boot2.version>2.2.0</resilience4j.spring.boot2.version>
+        <logstash.logback.encoder.version>7.4</logstash.logback.encoder.version>
+        <maven.scm.plugin.version>1.11.3</maven.scm.plugin.version>
     </properties>
 
     <dependencies>
@@ -64,18 +70,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>3.2.2</version>
+            <version>${modelmapper.version}</version>
         </dependency>
 
         <dependency>
@@ -88,11 +92,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.18.2</version>
+            <version>${jackson.dataformat.xml.version}</version>
         </dependency>
 
         <dependency>
@@ -131,7 +134,7 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-all</artifactId>
-            <version>2.3.0</version>
+            <version>${resilience4j.all.version}</version>
         </dependency>
 
         <dependency>
@@ -142,7 +145,7 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot2</artifactId>
-            <version>2.2.0</version>
+            <version>${resilience4j.spring.boot2.version}</version>
         </dependency>
 
         <dependency>
@@ -154,7 +157,7 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.4</version>
+            <version>${logstash.logback.encoder.version}</version>
         </dependency>
 
         <dependency>
@@ -207,7 +210,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-plugin</artifactId>
-                <version>1.11.3</version>
+                <version>${maven.scm.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
