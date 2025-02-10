@@ -165,6 +165,7 @@ services:
       - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
+      - broker
 
   bankingapp-transaction-ms:
     image: ihomziak/bankingapp-transaction-ms:latest
@@ -186,12 +187,12 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: broker:9092
       SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: broker:9092
-
     depends_on:
       - mysql-tms-c
       - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
+      - broker
 
   prometheus:
     image: prom/prometheus:v2.46.0
