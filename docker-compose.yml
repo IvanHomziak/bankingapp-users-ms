@@ -141,7 +141,7 @@ services:
       - bankingapp-cloud-api-gateway
 
   bankingapp-client-account-ms:
-    image: ihomziak/bankingapp-transaction-ms:latest
+    image: ihomziak/bankingapp-client-account-ms:latest
     container_name: client-account-ms
     ports:
       - "8084:8084"
