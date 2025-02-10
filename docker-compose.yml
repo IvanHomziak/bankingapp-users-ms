@@ -184,7 +184,6 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-#      RACK_ENV: development
       SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS: broker:9092
       SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: broker:9092
 
@@ -236,27 +235,16 @@ services:
       - GF_LOG_MODE=console file
       - GF_LOG_FILTERS=alerting.notifier.slack:debug alertmanager:debug ngalert:debug
 
-    #  alertmanager:
-    #    image: prom/alertmanager:v0.25.0
-    #    ports:
-    #      - "9093:9093"
-    #    volumes:
-    #      - ./alert-manager/tmp:/data
-    #      - ./alert-manager/config:/config
-    #    command: --config.file=/config/alertmanager.yml --log.level=debug
+      #  alertmanager:
+      #    image: prom/alertmanager:v0.25.0
+      #    ports:
+      #      - "9093:9093"
+      #    volumes:
+      #      - ./alert-manager/tmp:/data
+      #      - ./alert-manager/config:/config
+      #    command: --config.file=/config/alertmanager.yml --log.level=debug
 
-#  kafka-producer:
-#    image: kafkaproducer:0.0.1
-#    container_name: kafka-producer
-#    environment:
-#      PRODUCER_BOOTSTRAP_SERVERS: 'broker:9092'
-#    ports:
-#      - "8082:8082"
-#    restart: "no"
-#    depends_on:
-#      - broker
-
-      # ZooKeeper for Kafka
+  # ZooKeeper for Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     hostname: zookeeper
@@ -297,82 +285,128 @@ services:
     networks:
       - bankingapp-network
 
-#  # Redis Master (for Sentinel)
-#  redis-master:
-#    container_name: redis-master
-#    image: 'bitnami/redis:latest'
-#    environment:
-#      - REDIS_REPLICATION_MODE=master
-#      - REDIS_PASSWORD=redispassword
-#    ports:
-#      - "6379:6379"
-#    networks:
-#      - bankingapp-network
-#
-#  # Redis Slave
-#  redis-slave:
-#    container_name: slave-redis
-#    image: bitnami/redis:latest
-#    environment:
-#      - REDIS_REPLICATION_MODE=slave
-#      - REDIS_MASTER_HOST=redis-master
-#      - REDIS_MASTER_PASSWORD=redispassword
-#      - REDIS_PASSWORD=redispassword
-#    ports:
-#      - "7001:6379"
-#    networks:
-#      - bankingapp-network
-#    depends_on:
-#      - redis-master
-#
-#  # Redis Sentinel Instances
-#  redis-sentinel-1:
-#    image: bitnami/redis-sentinel:latest
-#    container_name: sentinel-1
-#    environment:
-#      - REDIS_MASTER_SET=mymaster
-#      - REDIS_MASTER_HOST=redis-master
-#      - REDIS_MASTER_PASSWORD=redispassword
-#      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
-#    ports:
-#      - "26379:26379"
-#    networks:
-#      - bankingapp-network
-#    depends_on:
-#      - redis-master
-#      - redis-slave
-#
-#  redis-sentinel-2:
-#    image: bitnami/redis-sentinel:latest
-#    container_name: sentinel-2
-#    environment:
-#      - REDIS_MASTER_SET=mymaster
-#      - REDIS_MASTER_HOST=redis-master
-#      - REDIS_MASTER_PASSWORD=redispassword
-#      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
-#    ports:
-#      - "26380:26379"
-#    networks:
-#      - bankingapp-network
-#    depends_on:
-#      - redis-master
-#      - redis-slave
-#
-#  redis-sentinel-3:
-#    image: bitnami/redis-sentinel:latest
-#    container_name: sentinel-3
-#    environment:
-#      - REDIS_MASTER_SET=mymaster
-#      - REDIS_MASTER_HOST=redis-master
-#      - REDIS_MASTER_PASSWORD=redispassword
-#      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
-#    ports:
-#      - "26381:26379"
-#    networks:
-#      - bankingapp-network
-#    depends_on:
-#      - redis-master
-#      - redis-slave
+  #  # Redis Master (for Sentinel)
+  #  redis-master:
+  #    container_name: redis-master
+  #    image: 'bitnami/redis:latest'
+  #    environment:
+  #      - REDIS_REPLICATION_MODE=master
+  #      - REDIS_PASSWORD=redispassword
+  #    ports:
+  #      - "6379:6379"
+  #    networks:
+  #      - bankingapp-network
+  #
+  #  # Redis Slave
+  #  redis-slave:
+  #    container_name: slave-redis
+  #    image: bitnami/redis:latest
+  #    environment:
+  #      - REDIS_REPLICATION_MODE=slave
+  #      - REDIS_MASTER_HOST=redis-master
+  #      - REDIS_MASTER_PASSWORD=redispassword
+  #      - REDIS_PASSWORD=redispassword
+  #    ports:
+  #      - "7001:6379"
+  #    networks:
+  #      - bankingapp-network
+  #    depends_on:
+  #      - redis-master
+  #
+  #  # Redis Sentinel Instances
+  #  redis-sentinel-1:
+  #    image: bitnami/redis-sentinel:latest
+  #    container_name: sentinel-1
+  #    environment:
+  #      - REDIS_MASTER_SET=mymaster
+  #      - REDIS_MASTER_HOST=redis-master
+  #      - REDIS_MASTER_PASSWORD=redispassword
+  #      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
+  #    ports:
+  #      - "26379:26379"
+  #    networks:
+  #      - bankingapp-network
+  #    depends_on:
+  #      - redis-master
+  #      - redis-slave
+  #
+  #  redis-sentinel-2:
+  #    image: bitnami/redis-sentinel:latest
+  #    container_name: sentinel-2
+  #    environment:
+  #      - REDIS_MASTER_SET=mymaster
+  #      - REDIS_MASTER_HOST=redis-master
+  #      - REDIS_MASTER_PASSWORD=redispassword
+  #      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
+  #    ports:
+  #      - "26380:26379"
+  #    networks:
+  #      - bankingapp-network
+  #    depends_on:
+  #      - redis-master
+  #      - redis-slave
+  #
+  #  redis-sentinel-3:
+  #    image: bitnami/redis-sentinel:latest
+  #    container_name: sentinel-3
+  #    environment:
+  #      - REDIS_MASTER_SET=mymaster
+  #      - REDIS_MASTER_HOST=redis-master
+  #      - REDIS_MASTER_PASSWORD=redispassword
+  #      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=10000
+  #    ports:
+  #      - "26381:26379"
+  #    networks:
+  #      - bankingapp-network
+  #    depends_on:
+  #      - redis-master
+  #      - redis-slave
+
+
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: elasticsearch
+    restart: always
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      - xpack.security.enabled=false  # Disable security for local development
+      - ES_JAVA_OPTS=-Xmx256m -Xms256m
+      - discovery.type=single-node
+    ports:
+      - '9200:9200'
+    networks:
+      - elk-network
+
+  logstash:
+    image: logstash:8.17.1
+    container_name: logstash
+    restart: always
+    volumes:
+      - ./logstash/:/logstash_dir
+    command: logstash -f /logstash_dir/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5044:5044'
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+    networks:
+      - elk-network
+
+  kibana:
+    image: kibana:8.17.1
+    container_name: kibana
+    restart: always
+    ports:
+      - '5601:5601'
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk-network
+
 
 
 
@@ -380,3 +414,8 @@ services:
 networks:
   bankingapp-network:
     driver: bridge  # Connect to global network
+  elk-network:
+    driver: bridge
+
+volumes:
+  elastic_data: { }
