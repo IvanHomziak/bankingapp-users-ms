@@ -40,7 +40,7 @@ services:
     networks:
       - bankingapp-network  # 🔹 Connect to global network
     volumes:
-      - ./mysql-init:/docker-entrypoint-initdb.d/ # path to script which should create database
+      - ./mysql-init/cams.sql:/docker-entrypoint-initdb.d/cams.sql # path to script which should create database
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-padmin1234" ]
       interval: 30s
@@ -61,7 +61,7 @@ services:
       - "3308:3306"
     volumes:
       #      - mysql_data:/var/lib/mysql  # Persist MySQL data
-      - ./mysql-init:/docker-entrypoint-initdb.d/  # Custom SQL scripts directory
+      - ./mysql-init/tms.sql:/docker-entrypoint-initdb.d/tms.sql  # Custom SQL scripts directory
     networks:
       - bankingapp-network  # 🔹 Connect to global network
     healthcheck:

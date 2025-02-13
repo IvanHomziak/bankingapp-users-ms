@@ -7,6 +7,8 @@ import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
 import com.ihomziak.bankingapp.api.users.dto.UserResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
