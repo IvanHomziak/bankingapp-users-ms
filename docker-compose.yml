@@ -104,6 +104,8 @@ services:
       - "8010:8010"
     networks:
       - bankingapp-network  # 🔹 Connect to global network
+    depends_on:
+      - bankingapp-api-config-server
 
   bankingapp-cloud-api-gateway:
     image: ihomziak/bankingapp-cloud-api-gateway:latest
@@ -119,6 +121,8 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
+    depends_on:
+      - bankingapp-discovery-service
 
   bankingapp-users-ms-app:
     image: ihomziak/bankingapp-users-ms:latest

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-	
+
+	private static final Logger log = LoggerFactory.getLogger(UsersController.class);
+
 	@Autowired
 	private Environment env;
 	
@@ -35,8 +37,8 @@ public class UsersController {
 			consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
 			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
 			)
-	public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails)
-	{
+	public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails) {
+		log.info("Create user : {}", userDetails);
 		ModelMapper modelMapper = new ModelMapper(); 
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		
