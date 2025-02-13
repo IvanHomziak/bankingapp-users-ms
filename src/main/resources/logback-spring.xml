@@ -6,6 +6,7 @@
     <property name="LOG_FILE" value="${BUILD_FOLDER:-build}/${appName}"/>
     <property name="CONSOLE_LOG_PATTERN"
               value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
@@ -15,6 +16,7 @@
             <charset>utf8</charset>
         </encoder>
     </appender>
+
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>logstash:4560</destination>
         <encoder charset="UTF-8" class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
@@ -36,10 +38,12 @@
                 </pattern>
             </providers>
         </encoder>
+
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <includeCallerData>true</includeCallerData>
         </encoder>
     </appender>
+
     <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logback/redditApp.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -48,14 +52,11 @@
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
+
     <root level="INFO">
         <appender-ref ref="LOGSTASH"/>
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="STASH"/>
     </root>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <springProperty scope="context"
-                    name="appName"
-                    source="spring.application.name"/>
 </configuration>

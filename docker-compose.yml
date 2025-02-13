@@ -143,6 +143,9 @@ services:
       - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
+      - elasticsearch
+      - logstash
+      - kibana
 
   bankingapp-client-account-ms:
     image: ihomziak/bankingapp-client-account-ms:latest
@@ -383,8 +386,7 @@ services:
       ELASTIC_PASSWORD: changeme
       discovery.type: single-node
     networks:
-    - elk
-
+      - bankingapp-network
 
   logstash:
     container_name: library_logstash
@@ -396,14 +398,14 @@ services:
         read_only: true
     ports:
       - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
+#      - "5000:5000/tcp"
+#      - "5000:5000/udp"
       - "9600:9600"
       - "4560:4560"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - elk
+      - bankingapp-network
     depends_on:
       - elasticsearch
 
@@ -413,9 +415,11 @@ services:
     ports:
       - "5601:5601"
     networks:
-      - elk
+      - bankingapp-network
     depends_on:
       - elasticsearch
+
+
 
 networks:
   bankingapp-network:
