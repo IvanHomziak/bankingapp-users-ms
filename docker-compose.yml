@@ -104,8 +104,8 @@ services:
       - "8010:8010"
     networks:
       - bankingapp-network  # 🔹 Connect to global network
-    depends_on:
-      - bankingapp-api-config-server
+#    depends_on:
+#      - bankingapp-api-config-server
 
   bankingapp-cloud-api-gateway:
     image: ihomziak/bankingapp-cloud-api-gateway:latest
@@ -140,7 +140,6 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
     depends_on:
       - mysqldb-users-c
-      - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
       - elasticsearch
@@ -169,7 +168,6 @@ services:
       SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: broker:9092
     depends_on:
       - mysqldb-cms-c
-      - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
       - broker
@@ -196,7 +194,6 @@ services:
       SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS: broker:9092
     depends_on:
       - mysql-tms-c
-      - bankingapp-api-config-server
       - bankingapp-discovery-service
       - bankingapp-cloud-api-gateway
       - broker
@@ -373,7 +370,7 @@ services:
 
   elasticsearch:
     container_name: library_elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
+    image: elasticsearch:7.17.27
     volumes:
       - type: volume
         source: elasticsearch
@@ -390,7 +387,7 @@ services:
 
   logstash:
     container_name: library_logstash
-    image: docker.elastic.co/logstash/logstash:7.15.2
+    image: logstash:7.17.27
     volumes:
       - type: bind
         source: .logstash
@@ -398,8 +395,8 @@ services:
         read_only: true
     ports:
       - "5044:5044"
-#      - "5000:5000/tcp"
-#      - "5000:5000/udp"
+      - "5001:5001/tcp"
+      - "5001:5001/udp"
       - "9600:9600"
       - "4560:4560"
     environment:
@@ -411,7 +408,7 @@ services:
 
   kibana:
     container_name: library_kibana
-    image: docker.elastic.co/kibana/kibana:7.15.2
+    image: kibana:7.17.27
     ports:
       - "5601:5601"
     networks:
