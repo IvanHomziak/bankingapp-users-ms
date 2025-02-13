@@ -369,58 +369,62 @@ services:
 
 
   elasticsearch:
-    image: elasticsearch:8.17.1
-    container_name: elasticsearch
-    restart: always
+    container_name: library_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.2
     volumes:
-      - elastic_data:/usr/share/elasticsearch/data/
-    environment:
-      - xpack.security.enabled=false  # Disable security for local development
-      - ES_JAVA_OPTS=-Xmx256m -Xms256m
-      - discovery.type=single-node
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
     ports:
-      - '9200:9200'
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      discovery.type: single-node
     networks:
-      - elk-network
+    - elk
+
 
   logstash:
-    image: logstash:8.17.1
-    container_name: logstash
-    restart: always
+    container_name: library_logstash
+    image: docker.elastic.co/logstash/logstash:7.15.2
     volumes:
-      - ./logstash/:/logstash_dir
-    command: logstash -f /logstash_dir/pipeline/logstash.conf
+      - type: bind
+        source: .logstash
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+      - "4560:4560"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
     depends_on:
       - elasticsearch
-    ports:
-      - '5044:5044'
-    environment:
-      - LS_JAVA_OPTS=-Xmx256m -Xms256m
-    networks:
-      - elk-network
 
   kibana:
-    image: kibana:8.17.1
-    container_name: kibana
-    restart: always
+    container_name: library_kibana
+    image: docker.elastic.co/kibana/kibana:7.15.2
     ports:
-      - '5601:5601'
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - "5601:5601"
+    networks:
+      - elk
     depends_on:
       - elasticsearch
-    networks:
-      - elk-network
-
-
-
-
 
 networks:
   bankingapp-network:
     driver: bridge  # Connect to global network
   elk-network:
     driver: bridge
+  elk:
+    driver: bridge
 
 volumes:
+  elasticsearch:
   elastic_data: { }
