@@ -1,6 +1,7 @@
 package com.ihomziak.bankingapp.api.users.security;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import com.ihomziak.bankingapp.common.api.JwtClaimsParser;
 import org.springframework.core.env.Environment;
@@ -32,7 +33,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
 
         if (authorizationHeader == null
-                || !authorizationHeader.startsWith(environment.getProperty("authorization.token.header.prefix"))) {
+                || !authorizationHeader.startsWith(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")))) {
             chain.doFilter(req, res);
             return;
         }
