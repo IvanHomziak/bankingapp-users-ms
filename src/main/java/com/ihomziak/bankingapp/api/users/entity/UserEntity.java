@@ -14,27 +14,31 @@ public class UserEntity implements Serializable {
 	private static final long serialVersionUID = -2731425678149216053L;
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private long id;
 	
-	@Column(nullable=false, length=50)
+	@Column(name = "first_name", nullable=false, length=50)
 	private String firstName;
 	
-	@Column(nullable=false, length=50)
+	@Column(name = "last_name", nullable=false, length=50)
 	private String lastName;
 	
-	@Column(nullable=false, length=120, unique=true)
+	@Column(name = "email", nullable=false, length=120, unique=true)
 	private String email;
 	
-	@Column(nullable=false, unique=true)
+	@Column(name = "user_id", nullable=false, unique=true)
 	private String userId;
 	
-	@Column(nullable=false, unique=true)	
+	@Column(name = "encrypted_password", nullable=false, unique=true)
 	private String encryptedPassword;
 	
 	@ManyToMany(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
-	@JoinTable(name="users_roles", joinColumns=@JoinColumn(name="users_id", referencedColumnName="id"), 
-			inverseJoinColumns=@JoinColumn(name="roles_id", referencedColumnName="id"))
+	@JoinTable(
+			name="users_roles",
+			joinColumns=@JoinColumn(name="users_id", referencedColumnName="id"),
+			inverseJoinColumns=@JoinColumn(name="roles_id", referencedColumnName="id")
+	)
 	Collection<RoleEntity> roles;
 	
 	public long getId() {

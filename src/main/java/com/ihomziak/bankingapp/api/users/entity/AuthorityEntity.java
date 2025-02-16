@@ -12,7 +12,7 @@ public class AuthorityEntity implements Serializable {
     private static final long serialVersionUID = 1618156374241833700L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false, length = 20)

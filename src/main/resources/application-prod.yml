@@ -82,9 +82,12 @@ authorization:
     header:
       name: Authorization
       prefix: Bearer
-  login:
-    url:
-      path: /users/login
+
+# Login PATH url
+login:
+  url:
+    path: /users/login
+
 token:
   expiration_time: 24600000
   secret: dgjorufhrsnjdu438fkdj38fdmcv7dm3ckvhrsnjjuwelueivhe848fhedldh5ndk
