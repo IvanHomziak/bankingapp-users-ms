@@ -1,10 +1,10 @@
 package com.ihomziak.bankingapp.api.users.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
-@Builder
+@Getter
+@Setter
 public class LoginRequestDto {
 	private String email;
 	private String password;

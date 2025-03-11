@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class AlbumResponseDto {
-
     private String albumId;
     private String userId; 
     private String name;
