@@ -1,10 +1,13 @@
 package com.ihomziak.bankingapp.api.users.controller;
 
-import com.ihomziak.bankingapp.api.users.dto.CreateUserRequestDto;
-import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
-import com.ihomziak.bankingapp.api.users.dto.UserResponseDto;
-import com.ihomziak.bankingapp.api.users.service.UsersService;
-import com.ihomziak.bankingapp.api.users.shared.UserDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
+
+import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +19,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserRequestDto;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
+import com.ihomziak.bankingapp.api.users.dto.UserResponseDto;
+import com.ihomziak.bankingapp.api.users.service.UsersService;
+import com.ihomziak.bankingapp.api.users.shared.UserDto;
 
 @ExtendWith(MockitoExtension.class)
 class UsersControllerTest {
@@ -59,10 +62,11 @@ class UsersControllerTest {
 
     @Test
     void testCreateUser() {
-        CreateUserRequestDto requestDto = new CreateUserRequestDto();
-        requestDto.setEmail("test@example.com");
-        requestDto.setFirstName("John");
-        requestDto.setLastName("Doe");
+        CreateUserRequestDto requestDto = CreateUserRequestDto.builder()
+            .email("test@example.com")
+            .firstName("John")
+            .lastName("Doe")
+            .build();
 
         when(usersService.createUser(any(UserDto.class))).thenReturn(mockUserDto);
 

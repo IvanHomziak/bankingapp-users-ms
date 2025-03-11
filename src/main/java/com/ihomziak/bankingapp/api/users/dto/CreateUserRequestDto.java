@@ -3,7 +3,11 @@ package com.ihomziak.bankingapp.api.users.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@Builder
 public class CreateUserRequestDto {
 	
 	@NotNull(message="First name cannot be null")
@@ -21,39 +25,4 @@ public class CreateUserRequestDto {
 	@NotNull(message="Email cannot be null")
 	@Email
 	private String email;
-	
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	@Override
-	public String toString() {
-		return "CreateUserRequestDto{" +
-				"firstName='" + firstName + '\'' +
-				", lastName='" + lastName + '\'' +
-				", password='" + password + '\'' +
-				", email='" + email + '\'' +
-				'}';
-	}
 }
