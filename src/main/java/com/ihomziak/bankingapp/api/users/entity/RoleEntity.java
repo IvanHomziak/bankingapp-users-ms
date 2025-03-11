@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -16,6 +17,7 @@ import java.util.Collection;
 @Entity@Table(name = "roles")
 public class RoleEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 6929482536229723029L;
 
     @Id
