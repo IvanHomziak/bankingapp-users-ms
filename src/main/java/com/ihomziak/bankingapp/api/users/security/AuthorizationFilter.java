@@ -14,10 +14,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-    private Environment environment;
+    private final Environment environment;
 
     public AuthorizationFilter(AuthenticationManager authenticationManager,
                                Environment environment) {
