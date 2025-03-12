@@ -14,8 +14,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
     Environment environment;
 
     @Autowired
-    public FeignErrorDecoder(Environment environment)
-    {
+    public FeignErrorDecoder(Environment environment) {
         this.environment = environment;
     }
 

@@ -21,64 +21,63 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UsersController {
 
-	private static final Logger log = LoggerFactory.getLogger(UsersController.class);
+    private static final Logger log = LoggerFactory.getLogger(UsersController.class);
 
-	@Autowired
-	private Environment env;
-	
-	@Autowired
-	UsersService usersService;
+    @Autowired
+    private Environment env;
 
-	@GetMapping("/status/check")
-	public String status()
-	{
-		return "Working on port " + env.getProperty("local.server.port") + ", with token = " + env.getProperty("token.secret");
-	}
- 
-	@PostMapping(
-			consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE },
-			produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }
-			)
-	public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails) {
-		log.info("Create user : {}", userDetails);
-		ModelMapper modelMapper = new ModelMapper(); 
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		
-		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
-		
-		UserDto createdUser = usersService.createUser(userDto);
-		
-		CreateUserResponseDto returnValue = modelMapper.map(createdUser, CreateUserResponseDto.class);
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
-	}
-	
+    @Autowired
+    UsersService usersService;
+
+    @GetMapping("/status/check")
+    public String status() {
+        return "Working on port " + env.getProperty("local.server.port") + ", with token = " + env.getProperty("token.secret");
+    }
+
+    @PostMapping(
+            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
+    )
+    public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails) {
+        log.info("Create user : {}", userDetails);
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+
+        UserDto createdUser = usersService.createUser(userDto);
+
+        CreateUserResponseDto returnValue = modelMapper.map(createdUser, CreateUserResponseDto.class);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+    }
+
     @GetMapping(
-			value="/{userId}",
-			produces = {
-					MediaType.APPLICATION_XML_VALUE,
-					MediaType.APPLICATION_JSON_VALUE
-			})
+            value = "/{userId}",
+            produces = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            })
     @PreAuthorize("hasRole('ADMIN') or principal == #userId")
     //@PreAuthorize("principal == #userId")
     //@PostAuthorize("principal == returnObject.body.userId")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("userId") String userId,
-												   @RequestHeader("Authorization") String authorization) {
-       
-        UserDto userDto = usersService.getUserByUserId(userId, authorization); 
+                                                   @RequestHeader("Authorization") String authorization) {
+
+        UserDto userDto = usersService.getUserByUserId(userId, authorization);
         UserResponseDto returnValue = new ModelMapper().map(userDto, UserResponseDto.class);
-        
+
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
-    
+
     @PreAuthorize("hasRole('ADMIN') or hasAuthority('PROFILE_DELETE') or principal == #userId")
     @DeleteMapping("/{userId}")
     public String deleteUser(@PathVariable("userId") String userId) {
-    	
-    	// Delete user logic here
-    	
-    	return "Deleting user with id " + userId;
+
+        // Delete user logic here
+
+        return "Deleting user with id " + userId;
     }
-	
-	
+
+
 }

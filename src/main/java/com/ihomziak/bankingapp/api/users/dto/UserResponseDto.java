@@ -12,5 +12,5 @@ public class UserResponseDto {
     private String firstName;
     private String lastName;
     private String email;
-	private List<AlbumResponseDto> albums;
+    private List<AlbumResponseDto> albums;
 }

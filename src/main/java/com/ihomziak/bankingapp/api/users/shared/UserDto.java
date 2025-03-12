@@ -6,73 +6,73 @@ import java.io.Serializable;
 import java.util.List;
 
 public class UserDto implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -953297098295050686L;
-	
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String password;
-	private String userId;
-	private String encryptedPassword;
-	private List<AlbumResponseDto> albums;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -953297098295050686L;
 
-	public List<AlbumResponseDto> getAlbums() {
-		return albums;
-	}
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String userId;
+    private String encryptedPassword;
+    private List<AlbumResponseDto> albums;
 
-	public void setAlbums(List<AlbumResponseDto> albums) {
-		this.albums = albums;
-	}
+    public List<AlbumResponseDto> getAlbums() {
+        return albums;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public void setAlbums(List<AlbumResponseDto> albums) {
+        this.albums = albums;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public String getEncryptedPassword() {
-		return encryptedPassword;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public void setEncryptedPassword(String encryptedPassword) {
-		this.encryptedPassword = encryptedPassword;
-	}
+    public String getEncryptedPassword() {
+        return encryptedPassword;
+    }
+
+    public void setEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
+    }
 
 }

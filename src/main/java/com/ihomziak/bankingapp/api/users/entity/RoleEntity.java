@@ -14,7 +14,8 @@ import java.util.Collection;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity@Table(name = "roles")
+@Entity
+@Table(name = "roles")
 public class RoleEntity implements Serializable {
 
     @Serial
