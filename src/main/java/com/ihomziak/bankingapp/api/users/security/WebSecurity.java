@@ -53,8 +53,8 @@ public class WebSecurity {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 )
                 .addFilter(authenticationFilter)

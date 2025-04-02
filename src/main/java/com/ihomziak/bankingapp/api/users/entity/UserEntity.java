@@ -37,7 +37,7 @@ public class UserEntity implements Serializable {
     private String email;
 
     @Column(name = "user_id", nullable = false, unique = true)
-    private UUID userId;
+    private String userId;
 
     @Column(name = "encrypted_password", nullable = false, unique = true)
     private String encryptedPassword;

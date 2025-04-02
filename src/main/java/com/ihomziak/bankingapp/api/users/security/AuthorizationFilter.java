@@ -29,13 +29,15 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
 
-        String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
-
-        if (authorizationHeader == null
-                || !authorizationHeader.startsWith(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")))) {
-            chain.doFilter(req, res);
-            return;
+        if (!req.getMethod().startsWith("/users") & !req.getMethod().equals("POST")) {
+            String authorizationHeader = req.getHeader(environment.getProperty("authorization.token.header.name"));
+            if (authorizationHeader == null
+                    || !authorizationHeader.startsWith(Objects.requireNonNull(environment.getProperty("authorization.token.header.prefix")))) {
+                chain.doFilter(req, res);
+                return;
+            }
         }
+
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 

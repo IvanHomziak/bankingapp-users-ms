@@ -1,13 +1,13 @@
 package com.ihomziak.bankingapp.api.users.service.impl;
 
-import com.ihomziak.bankingapp.api.users.dao.AlbumsServiceClient;
 import com.ihomziak.bankingapp.api.users.dao.UsersRepository;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserRequestDto;
+import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
 import com.ihomziak.bankingapp.api.users.entity.AuthorityEntity;
 import com.ihomziak.bankingapp.api.users.entity.RoleEntity;
 import com.ihomziak.bankingapp.api.users.entity.UserEntity;
 import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
-import com.ihomziak.bankingapp.api.users.dto.AlbumResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
@@ -21,7 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -32,37 +31,25 @@ public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final Environment environment;
-    private final AlbumsServiceClient albumsServiceClient;
-
 
     @Autowired
-    public UsersServiceImpl(UsersRepository usersRepository,
-                            BCryptPasswordEncoder bCryptPasswordEncoder, RestTemplate restTemplate,
-                            Environment environment, AlbumsServiceClient albumsServiceClient) {
+    public UsersServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.environment = environment;
-        this.albumsServiceClient = albumsServiceClient;
     }
 
     @Override
-    public UserDto createUser(UserDto userDetails) {
-        // TODO Auto-generated method stub
-
-        userDetails.setUserId(UUID.randomUUID().toString());
-        userDetails.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
-
+    public CreateUserResponseDto createUser(CreateUserRequestDto userDetails) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+        userEntity.setUserId(UUID.randomUUID().toString());
+        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDetails.getPassword()));
 
         usersRepository.save(userEntity);
 
-        UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
-
-        return returnValue;
+        return modelMapper.map(userEntity, CreateUserResponseDto.class);
     }
 
     @Override
@@ -83,10 +70,7 @@ public class UsersServiceImpl implements UsersService {
             });
         });
 
-        return new User(userEntity.getEmail(),
-                userEntity.getEncryptedPassword(),
-                true, true, true, true,
-                authorities);
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), true, true, true, true, authorities);
     }
 
     @Override
@@ -107,11 +91,7 @@ public class UsersServiceImpl implements UsersService {
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-        List<AlbumResponseDto> albumsList = albumsServiceClient.getAlbums(userId);
-
         logger.info("Before calling albums Microservice");
-        userDto.setAlbums(albumsList);
-        logger.info("After calling albums Microservice");
 
         return userDto;
     }

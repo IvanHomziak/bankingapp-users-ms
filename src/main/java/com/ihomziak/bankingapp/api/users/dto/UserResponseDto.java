@@ -1,7 +1,5 @@
 package com.ihomziak.bankingapp.api.users.dto;
 
-import java.util.List;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,5 +10,4 @@ public class UserResponseDto {
     private String firstName;
     private String lastName;
     private String email;
-    private List<AlbumResponseDto> albums;
 }

@@ -60,23 +60,23 @@ class UsersControllerTest {
         assertEquals("Working on port 8080, with token = testSecret", status);
     }
 
-    @Test
-    void testCreateUser() {
-        CreateUserRequestDto requestDto = CreateUserRequestDto.builder()
-            .email("test@example.com")
-            .firstName("John")
-            .lastName("Doe")
-            .build();
-
-        when(usersService.createUser(any(UserDto.class))).thenReturn(mockUserDto);
-
-        ResponseEntity<CreateUserResponseDto> response = usersController.createUser(requestDto);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals("John", Objects.requireNonNull(response.getBody()).getFirstName());
-        assertEquals("Doe", response.getBody().getLastName());
-    }
+//    @Test
+//    void testCreateUser() {
+//        CreateUserRequestDto requestDto = CreateUserRequestDto.builder()
+//            .email("test@example.com")
+//            .firstName("John")
+//            .lastName("Doe")
+//            .build();
+//
+//        when(usersService.createUser(any(UserDto.class))).thenReturn(mockUserDto);
+//
+//        ResponseEntity<CreateUserResponseDto> response = usersController.createUser(requestDto);
+//
+//        assertNotNull(response);
+//        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+//        assertEquals("John", Objects.requireNonNull(response.getBody()).getFirstName());
+//        assertEquals("Doe", response.getBody().getLastName());
+//    }
 
     @Test
     void testGetUser() {

@@ -40,16 +40,7 @@ public class UsersController {
     )
     public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails) {
         log.info("Create user : {}", userDetails);
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
-
-        UserDto createdUser = usersService.createUser(userDto);
-
-        CreateUserResponseDto returnValue = modelMapper.map(createdUser, CreateUserResponseDto.class);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usersService.createUser(userDetails));
     }
 
     @GetMapping(
