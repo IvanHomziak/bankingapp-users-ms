@@ -92,7 +92,7 @@ authorization:
 # Login PATH url
 login:
   url:
-    path: /users/login
+    path: /api/v1/users/login
 # Security
 token:
   expiration_time: 24600000
