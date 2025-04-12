@@ -1,3 +1,60 @@
+# Port number
+server:
+  port: ${PORT:8083}
+
 spring:
   profiles:
-    active: prod
+    active: dev
+
+  application:
+    name: users-ms
+  config:
+    import: optional:configserver:http://localhost:8888
+  devtools:
+    restart:
+      enabled: true
+  # Hibernate
+  data:
+    rest:
+      base-path: /api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+    show-sql: true
+
+  # RabbitMQ
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# Eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8010/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+# Auth
+authorization:
+  token:
+    header:
+      name: Authorization
+      prefix: Bearer
+# Login PATH url
+login:
+  url:
+    path: /api/v1/users/login
+# Security
+token:
+  expiration_time: 24600000
+  secret: dgjorufhrsnjdu438fkdj38fdmcv7dm3ckvhrsnjjuwelueivhe848fhedldh5ndk

@@ -1,6 +1,7 @@
 package com.ihomziak.bankingapp.api.users.security;
 
-import com.ihomziak.bankingapp.api.users.service.UsersService;
+import static com.ihomziak.bankingapp.api.users.shared.constants.Endpoints.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -13,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.ihomziak.bankingapp.api.users.service.UsersService;
 
 @EnableMethodSecurity(prePostEnabled = true)
 @Configuration
@@ -50,12 +53,13 @@ public class WebSecurity {
         http.csrf((csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasRole("ADMIN")
+                    .requestMatchers("/actuator/**").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, CREATE_USER).permitAll()
+                    .requestMatchers(HttpMethod.POST, LOGIN_USER).permitAll()
+                    .requestMatchers(HttpMethod.GET, STATUS_CHECK).permitAll()
+                    .requestMatchers(HttpMethod.GET, GET_USER).authenticated()
+                    .requestMatchers(HttpMethod.DELETE, DELETE_USER).hasRole("ADMIN")
                 )
                 .addFilter(authenticationFilter)
                 .addFilter(new AuthorizationFilter(authenticationManager, environment))

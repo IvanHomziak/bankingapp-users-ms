@@ -1,12 +1,13 @@
 package com.ihomziak.bankingapp.api.users.controller;
 
+import static com.ihomziak.bankingapp.api.users.shared.constants.Endpoints.API_PREFIX;
+
 import com.ihomziak.bankingapp.api.users.service.UsersService;
 import com.ihomziak.bankingapp.api.users.shared.UserDto;
 import com.ihomziak.bankingapp.api.users.dto.CreateUserRequestDto;
 import com.ihomziak.bankingapp.api.users.dto.CreateUserResponseDto;
 import com.ihomziak.bankingapp.api.users.dto.UserResponseDto;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping(API_PREFIX)
 public class UsersController {
 
     private static final Logger log = LoggerFactory.getLogger(UsersController.class);
@@ -35,8 +36,9 @@ public class UsersController {
     }
 
     @PostMapping(
-            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
+        path = "/create",
+        consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+        produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}
     )
     public ResponseEntity<CreateUserResponseDto> createUser(@RequestBody CreateUserRequestDto userDetails) {
         log.info("Create user : {}", userDetails);
@@ -69,6 +71,4 @@ public class UsersController {
 
         return "Deleting user with id " + userId;
     }
-
-
 }
