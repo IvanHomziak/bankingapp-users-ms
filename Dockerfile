@@ -1,9 +1,10 @@
-# Base image
-#FROM openjdk:18-jdk-alpine
+# ✅ Multi-platform base image (Debian-based)
 FROM eclipse-temurin:18-jdk
 
-# Install required dependencies
-RUN apk --no-cache add git curl maven
+# Install required dependencies for build
+RUN apt-get update && \
+    apt-get install -y git curl maven && \
+    apt-get clean
 
 # Set working directory
 WORKDIR /app
@@ -16,13 +17,11 @@ RUN git clone https://github.com/IvanHomziak/bankingapp-common.git && \
 # Go back to /app directory
 WORKDIR /app
 
-# Copy project files (excluding `src` to use caching efficiently)
+# Copy pom.xml and resolve dependencies (enables caching)
 COPY pom.xml .
-
-# Resolve dependencies (this speeds up builds by using caching)
 RUN mvn dependency:resolve
 
-# Copy the rest of the source code
+# Copy full source
 COPY src src
 
 # Build the project
