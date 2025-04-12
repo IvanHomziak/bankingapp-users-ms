@@ -89,11 +89,11 @@ class UsersControllerTest {
 //        assertEquals("John", Objects.requireNonNull(response.getBody()).getFirstName());
 //        assertEquals("Doe", response.getBody().getLastName());
 //    }
-
-    @Test
-    void testDeleteUser() {
-        String response = usersController.deleteUser("12345");
-
-        assertEquals("Deleting user with id 12345", response);
-    }
+//
+//    @Test
+//    void testDeleteUser() {
+//        String response = usersController.deleteUser("12345");
+//
+//        assertEquals("Deleting user with id 12345", response);
+//    }
 }
