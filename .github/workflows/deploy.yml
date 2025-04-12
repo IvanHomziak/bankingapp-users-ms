@@ -59,6 +59,10 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      # 🆕 1️⃣ Setup Docker Buildx with multi-arch support
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action
+
       # 🔟 Збірка Docker-образу
       - name: Build Docker Image
         uses: docker/build-push-action@v4
