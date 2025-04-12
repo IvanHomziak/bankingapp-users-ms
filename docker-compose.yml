@@ -14,8 +14,8 @@ services:
       MYSQL_ROOT_PASSWORD: admin1234
     ports:
       - "3309:3306"
-    networks:
-      - bankingapp-network  # 🔹 Connect to global network
+#    networks:
+#      - bankingapp-network  # 🔹 Connect to global network
     volumes:
       - ./mysql-init/usersdb.sql:/docker-entrypoint-initdb.d/usersdb.sql # path to script which should create database
     healthcheck:
@@ -29,8 +29,8 @@ services:
     container_name: users-ms
     ports:
       - "8083:8083"
-    networks:
-      - bankingapp-network  # 🔹 Connect to global network
+#    networks:
+#      - bankingapp-network  # 🔹 Connect to global network
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8010/eureka/
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
