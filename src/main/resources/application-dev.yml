@@ -63,7 +63,8 @@ eureka:
 logging:
   level:
     org:
-      springframework: ERROR
+      springframework:
+        security: DEBUG
       hibernate:
         SQL: DEBUG
         type:
