@@ -34,7 +34,7 @@ jobs:
       - name: Install bankingapp-common
         run: |
           cd bankingapp-common
-          mvn clean install -DskipTests
+          mvn clean install -DskipTests=true
 
       # 5️⃣ Запуск юніт-тестів
       - name: Run Unit Tests
@@ -46,7 +46,7 @@ jobs:
 
       # 7️⃣ Збірка JAR
       - name: Build bankingapp-users-ms Application
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests=true
 
       # 8️⃣ Визначення тегу образу
       - name: Define Image Tag

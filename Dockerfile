@@ -25,7 +25,7 @@ RUN mvn dependency:resolve
 COPY src src
 
 # Build the project
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests=true
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "target/bankingapp-users-ms.jar"]
