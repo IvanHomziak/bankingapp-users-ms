@@ -1,5 +1,6 @@
 # Base image
-FROM openjdk:18-jdk-alpine
+#FROM openjdk:18-jdk-alpine
+FROM eclipse-temurin:18-jdk-alpine
 
 # Install required dependencies
 RUN apk --no-cache add git curl maven

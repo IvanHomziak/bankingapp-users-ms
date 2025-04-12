@@ -20,7 +20,7 @@ spring:
   # Hibernate
   data:
     rest:
-      base-path: /api
+      base-path: /api/v1/users
   jpa:
     hibernate:
       ddl-auto: update

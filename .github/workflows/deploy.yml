@@ -64,7 +64,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          dockerfile: Dockerfile
+#          dockerfile: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: false
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:${{ env.IMAGE_TAG }}
@@ -75,7 +76,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          dockerfile: Dockerfile
+#          dockerfile: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:${{ env.IMAGE_TAG }}
