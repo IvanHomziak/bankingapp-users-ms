@@ -15,7 +15,7 @@ jobs:
       - name: Checkout bankingapp-users-ms
         uses: actions/checkout@v4
 
-      # 2️⃣ Checkout загального bankingapp-common
+      # 2️⃣ Checkout спільної бібліотеки bankingapp-common
       - name: Checkout bankingapp-common
         uses: actions/checkout@v4
         with:
@@ -36,11 +36,11 @@ jobs:
           cd bankingapp-common
           mvn clean install -DskipTests
 
-      # 5️⃣ Запуск тестів
+      # 5️⃣ Запуск юніт-тестів
       - name: Run Unit Tests
         run: mvn -B test --file pom.xml
 
-      # 6️⃣ Перевірка коду перед збіркою (опціонально)
+      # 6️⃣ Верифікація проєкту (опціонально)
       - name: Verify project (Optional)
         run: mvn verify
 
@@ -48,37 +48,28 @@ jobs:
       - name: Build bankingapp-users-ms Application
         run: mvn clean package -DskipTests
 
-      # 8️⃣ Визначення тегу образу (динамічний)
+      # 8️⃣ Визначення тегу образу
       - name: Define Image Tag
         run: echo "IMAGE_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
 
-      # 9️⃣ Логін у Docker Hub (перед створенням образу)
+      # 9️⃣ Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # 🔟 Збірка Docker-образу
-      - name: Build Docker Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-#          dockerfile: Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: false
-          tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:latest
+      # 🔟 Setup Docker Buildx (обов’язково для мультиархітектури)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # 🔟 Пуш Docker-образу у Docker Hub
-      - name: Push image to Docker Hub
+      # 🔁 Мультиархітектурна збірка та пуш
+      - name: Build and push multi-platform Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-#          dockerfile: Dockerfile
-          platforms: linux/amd64,linux/arm64
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:${{ env.IMAGE_TAG }}
             ${{ secrets.DOCKER_HUB_USERNAME }}/bankingapp-users-ms:latest
