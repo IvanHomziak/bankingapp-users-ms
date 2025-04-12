@@ -1,7 +1,6 @@
 package com.ihomziak.bankingapp.api.users.security;
 
 import com.ihomziak.bankingapp.api.users.service.UsersService;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -47,13 +46,14 @@ public class WebSecurity {
                 new AuthenticationFilter(usersService, environment, authenticationManager);
         authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
 
+        // CSRF
         http.csrf((csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                 )
@@ -63,6 +63,7 @@ public class WebSecurity {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // Frame options
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
         return http.build();
 
