@@ -13,10 +13,10 @@ spring:
   devtools:
     restart:
       enabled: true
-  # Hibernate
   data:
     rest:
       base-path: /api
+  # Hibernate
   jpa:
     hibernate:
       ddl-auto: update

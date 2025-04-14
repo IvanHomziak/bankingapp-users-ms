@@ -77,3 +77,8 @@ management:
   health:
     circuitbreakers:
       enabled: true
+
+# Security
+token:
+  expiration_time: 24600000
+  secret: dgjorufhrsnjdu438fkdj38fdmcv7dm3ckvhrsnjjuwelueivhe848fhedldh5ndk
