@@ -1,21 +1,3 @@
-spring:
-  # MySQL
-  sql:
-    init:
-      platform: mysql
-      mode: always
-  datasource:
-    url: jdbc:mysql://localhost:3309/${DB_NAME:users_db}?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
-    username: ${DB_USER:root}
-    password: ${DB_PASS:admin1234}
-
-  # H2
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-
 # Logging
 logging:
   level:
@@ -39,46 +21,3 @@ logging:
   file:
     name: users.ws.log
 
-### Http requests logging for
-resilience4j:
-  circuitbreaker:
-    circuit-breaker-aspect-order: 1
-    instances:
-      albums-ws:
-        failure-rate-threshold: 50
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 10000ms
-        sliding-window-type: COUNT_BASED
-        sliding-window-size: 2
-        minimum-number-of-calls: 1
-        event-consumer-buffer-size: 10
-  retry:
-    retry-aspect-order: 2
-    instances:
-      albums-ws:
-        max-attempts: 3
-        wait-duration: 2s
-        enable-exponential-backoff: true
-        exponential-backoff-multiplier: 5
-
-### Prometheus, Health, Metrics
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      access: unrestricted
-      show-details: always
-    prometheus:
-      access: unrestricted
-    metrics:
-      access: unrestricted
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-  health:
-    circuitbreakers:
-      enabled: true

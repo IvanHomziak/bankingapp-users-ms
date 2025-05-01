@@ -25,13 +25,24 @@ spring:
         temp:
           use_jdbc_metadata_defaults: false
     show-sql: true
-
   # RabbitMQ
   rabbitmq:
     host: ${RABBITMQ_HOST}
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
+  # Reset Email Sender
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # Eureka
 eureka:
@@ -42,3 +53,26 @@ eureka:
     fetch-registry: true
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+
+# FRONTEND
+frontend:
+  url: ${FRONTEND_URL}
+
+### Prometheus, Health, Metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      access: unrestricted
+      show-details: always
+    prometheus:
+      access: unrestricted
+    metrics:
+      access: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
